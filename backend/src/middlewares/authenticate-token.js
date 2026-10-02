@@ -10,31 +10,41 @@ const authenticateToken = (req, res, next) => {
     throw new ApiError(401, "Unauthorized. Please provide valid tokens.");
   }
 
-  jwt.verify(accessToken, env.JWT_ACCESS_TOKEN_SECRET, (err, user) => {
-    if (err) {
-      throw new ApiError(
-        401,
-        "Unauthorized. Please provide valid access token."
-      );
-    }
+  try {
+    const user = jwt.verify(accessToken, env.JWT_ACCESS_TOKEN_SECRET);
+    const refreshTokenData = jwt.verify(refreshToken, env.JWT_REFRESH_TOKEN_SECRET);
+    req.user = user;
+    req.refreshToken = refreshTokenData;
+    next();
+  } catch (err) {
+    throw new ApiError(401, "Unauthorized. Invalid or expired token.");
+  }
 
-    jwt.verify(
-      refreshToken,
-      env.JWT_REFRESH_TOKEN_SECRET,
-      (err, refreshToken) => {
-        if (err) {
-          throw new ApiError(
-            401,
-            "Unauthorized. Please provide valid refresh token."
-          );
-        }
+  // jwt.verify(accessToken, env.JWT_ACCESS_TOKEN_SECRET, (err, user) => {
+  //   if (err) {
+  //     throw new ApiError(
+  //       401,
+  //       "Unauthorized. Please provide valid access token."
+  //     );
+  //   }
 
-        req.user = user;
-        req.refreshToken = refreshToken;
-        next();
-      }
-    );
-  });
+  //   jwt.verify(
+  //     refreshToken,
+  //     env.JWT_REFRESH_TOKEN_SECRET,
+  //     (err, refreshToken) => {
+  //       if (err) {
+  //         throw new ApiError(
+  //           401,
+  //           "Unauthorized. Please provide valid refresh token."
+  //         );
+  //       }
+
+  //       req.user = user;
+  //       req.refreshToken = refreshToken;
+  //       next();
+  //     }
+  //   );
+  // });
 };
 
 module.exports = { authenticateToken };

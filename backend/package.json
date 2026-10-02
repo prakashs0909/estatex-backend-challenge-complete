@@ -7,7 +7,7 @@
     "setup:env": "node scripts/setup-env.js",
     "predev": "node scripts/setup-env.js",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
-    "dev:server": "node ./src/server.js",
+    "dev:server": "node  --watch ./src/server.js",
     "dev:client": "npm run dev --prefix frontend",
     "start": "node ./src/server.js",
     "build:client": "npm run build --prefix frontend",
